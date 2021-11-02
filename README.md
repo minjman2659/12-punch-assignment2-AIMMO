@@ -13,7 +13,7 @@
 
 <br/>
 
-## 📍 Team Rules
+## 📌 Team Rules
 
 ### [팀 규칙 바로가기](https://mangrove-spectrum-269.notion.site/84675958ee2b4373912678e06160b13d)
 
