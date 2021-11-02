@@ -15,9 +15,9 @@ const hash = async (plainText) => {
 const signup = async (req, res, next) => {
   //회원가입
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const user = await fnUsers.findByEmail(req.body.email);
-    console.log(user);
+    // console.log(user);
     if (!user) {
       let params = {
         email: req.body.email,
