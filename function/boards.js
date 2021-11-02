@@ -2,15 +2,15 @@ const Board = require('../schemas/boards');
 const mongoose = require('mongoose');
 
 //리스트 조회 + 검색
-const getList = async (params) => { 
+const getList = async (params) => {
   console.log(params);
-  let where={};
-  if(params.category!=undefined){
-    where.category=new RegExp(params.category, "i")
-  };
-  if(params.title!=undefined){
-    where.title=new RegExp(params.title, "i") 
-  };
+  let where = {};
+  if (params.category != undefined) {
+    where.category = new RegExp(params.category, 'i');
+  }
+  if (params.title != undefined) {
+    where.title = new RegExp(params.title, 'i');
+  }
 
   console.log(where);
   const boards = await Board.find(where)
@@ -45,4 +45,4 @@ const del = async (_id) => {
   return result;
 };
 
-module.exports = { getList, getBoardCounts, findByPk, store, update, del};
+module.exports = { getList, findByPk, store, update, del };
