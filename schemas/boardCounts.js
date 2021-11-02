@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 // 게시판
 const Schema = mongoose.Schema;
 
@@ -7,6 +7,6 @@ const boardCountsSchema = new Schema({
   board_id: { type: Schema.Types.ObjectId, ref: "Boards" }
 });
 
-const BoardCounts = mongoose.model("BoardCounts", boardCountsSchema);
+const BoardCounts = mongoose.model('BoardCounts', boardCountsSchema);
 
 module.exports = BoardCounts;

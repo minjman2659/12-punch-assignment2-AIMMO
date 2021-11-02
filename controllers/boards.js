@@ -4,8 +4,6 @@ const fnBoardCounts = require('../function/boardCounts');
 const getList = async (req, res, next) => {
   //리스트조회
   try {
-    console.log("ctrl_boards: ")
-    console.log(req.query);
 
     // const params = {
     //   searchWord : req.params
@@ -31,7 +29,6 @@ const getOne = async (req, res, next) => {
         board_id: req.params.id,
       };
       const boardCounts = await fnBoardCounts.getBoardCountsByUser(param);
-      console.log('boardCounts: ', boardCounts);
       if (boardCounts === 0) {
         const boardCount = {
           user_id: req.query.user_id,
