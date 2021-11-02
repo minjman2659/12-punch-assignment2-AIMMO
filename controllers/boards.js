@@ -132,7 +132,7 @@ const patch = async (req, res, next) => {
         delete refreshTokenCheck.exp;
         const accessToken = generateAccessToken(refreshTokenCheck);
         //토큰 본인확인 추가 필요
-        if (board.user_id !== Number(req.body.user_id)) {
+        if (board.user_id.toString() !== req.body.user_id) {
           return res.status(403).json({
             message: 'Forbidden Request',
           });
@@ -145,7 +145,7 @@ const patch = async (req, res, next) => {
     // accessToken 유효 (200)
     else {
       //토큰 본인확인 추가 필요
-      if (board.user_id !== Number(req.body.user_id)) {
+      if (board.user_id.toString() !== req.body.user_id) {
         return res.status(403).json({
           message: 'Forbidden Request',
         });
@@ -176,8 +176,8 @@ const del = async (req, res, next) => {
       else {
         delete refreshTokenCheck.exp;
         const accessToken = generateAccessToken(refreshTokenCheck);
-        const userId = refreshTokenCheck.id;
-        if (board.user_id !== Number(userId)) {
+        const user_id = refreshTokenCheck.id;
+        if (board.user_id.toString() !== user_id) {
           return res.status(403).json({
             message: 'Forbidden Request',
           });
@@ -190,8 +190,8 @@ const del = async (req, res, next) => {
     // accessToken 유효 (200)
     else {
       //토큰 본인확인 추가 필요
-      const userId = accessTokenCheck.id;
-      if (board.user_id !== Number(userId)) {
+      const user_id = accessTokenCheck.id;
+      if (board.user_id.toString() !== user_id) {
         return res.status(403).json({
           message: 'Forbidden Request',
         });
