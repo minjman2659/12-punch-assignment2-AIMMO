@@ -7,7 +7,6 @@ const boardsSchema = new Schema({
   title: String,
   content: String,
   category: String,
-  count : Number,  
   createDate : Date,
   updateDate : Date  
 });

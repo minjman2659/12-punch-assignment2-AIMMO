@@ -1,4 +1,5 @@
 const fnBoards = require('../function/boards');
+const fnBoardCounts = require('../function/boardCounts');
 
 const getList = async (req, res, next) => {
   //리스트조회
@@ -23,8 +24,47 @@ const getList = async (req, res, next) => {
 const getOne = async (req, res, next) => {
   //단건조회
   try {
-    const data = await fnBoards.findByPk(req.params.id);
-   
+    if(req.query.userId){  //userId param 있으면 기 조회 여부 확인 후 반영
+      const param ={
+        userId : req.query.userId,
+        boardId : req.params.id
+      } 
+      const boardCounts = await fnBoardCounts.getBoardCountsByUser(param);
+      console.log('boardCounts', boardCounts);
+      if(boardCounts===0){
+        const boardCount = {
+          user : req.query.userId,
+          board : req.params.id
+        }
+        await fnBoardCounts.store(boardCount);
+      }   
+    }else{ //비회원이 조회한 경우 조회수 증가
+      const boardCount = {
+        user : null,
+        board : req.params.id
+      }
+      await fnBoardCounts.store(boardCount);
+    }   
+    
+    const board = await fnBoards.findByPk(req.params.id);
+
+    //data에 조회수 추가
+    const boardCount = await fnBoardCounts.getBoardCounts(req.params.id);
+
+    const data = {
+      _id: board._id,
+      usre: board.user,
+      title: board.title,
+      content: board.content,
+      category: board.category,
+      count: boardCount
+    }
+
+    // console.log('count', count);
+    // console.log(count);
+    // data.boardCounts = count;
+    // console.log(data);
+
     return res.status(200).json({
       data
     });
