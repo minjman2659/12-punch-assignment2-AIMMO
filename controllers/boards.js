@@ -1,10 +1,11 @@
 const fnBoards = require('../function/boards');
 const fnBoardCounts = require('../function/boardCounts');
+const { isAuthorized, generateAccessToken } = require('../utils/accessToken');
+const { refreshAuthorized } = require('../utils/refreshToken');
 
 const getList = async (req, res, next) => {
   //리스트조회
   try {
-
     // const params = {
     //   searchWord : req.params
     // };
@@ -36,7 +37,7 @@ const getOne = async (req, res, next) => {
         };
         await fnBoardCounts.store(boardCount);
       }
-    }/* else {
+    } /* else {
       //비회원이 조회한 경우 조회수 증가 x
       // -> 회원의 로그인 후 조회만 조회수 증가
       const boardCount = {
@@ -76,15 +77,32 @@ const getOne = async (req, res, next) => {
 const post = async (req, res, next) => {
   //게시글 등록
   try {
+    const accessTokenCheck = isAuthorized(req);
+    const refreshTokenCheck = refreshAuthorized(req);
     let params = {
       user_id: req.body.user_id,
       title: req.body.title,
       content: req.body.content,
       category: req.body.category,
     };
-
-    await fnBoards.store(params);
-    return res.status(200).json({ message: 'OK' });
+    if (!accessTokenCheck) {
+      // accessToken 만료 / refreshToken 만료 (401)
+      if (!refreshTokenCheck) {
+        res.status(401).json({ message: 'Send new Login Request' });
+      }
+      // accessToken 만료 / refreshToken 유효 (201)
+      else {
+        delete refreshTokenCheck.exp;
+        const accessToken = generateAccessToken(refreshTokenCheck);
+        await fnBoards.store(params);
+        return res.status(201).json({ accessToken, message: 'OK' });
+      }
+    }
+    // accessToken 유효 (200)
+    else {
+      await fnBoards.store(params);
+      return res.status(200).json({ message: 'OK' });
+    }
   } catch (e) {
     console.log(e);
     next(e);
@@ -94,6 +112,8 @@ const post = async (req, res, next) => {
 const patch = async (req, res, next) => {
   //게시글 수정
   try {
+    const accessTokenCheck = isAuthorized(req);
+    const refreshTokenCheck = refreshAuthorized(req);
     let params = {
       title: req.body.title,
       content: req.body.content,
@@ -102,14 +122,37 @@ const patch = async (req, res, next) => {
     };
     const board = await fnBoards.findByPk(req.params.id);
 
-    //토큰 본인확인 추가 필요
-    if (board.user_id != req.body.user_id) {
-      return res.status(401).json({
-        message: 'Not Allowed',
-      });
-    } else {
-      await fnBoards.update(req.params.id, params);
-      return res.status(200).json({ message: 'OK' });
+    if (!accessTokenCheck) {
+      // accessToken 만료 / refreshToken 만료 (401)
+      if (!refreshTokenCheck) {
+        res.status(401).json({ message: 'Send new Login Request' });
+      }
+      // accessToken 만료 / refreshToken 유효 (201)
+      else {
+        delete refreshTokenCheck.exp;
+        const accessToken = generateAccessToken(refreshTokenCheck);
+        //토큰 본인확인 추가 필요
+        if (board.user_id !== Number(req.body.user_id)) {
+          return res.status(403).json({
+            message: 'Forbidden Request',
+          });
+        } else {
+          await fnBoards.update(req.params.id, params);
+          return res.status(201).json({ accessToken, message: 'OK' });
+        }
+      }
+    }
+    // accessToken 유효 (200)
+    else {
+      //토큰 본인확인 추가 필요
+      if (board.user_id !== Number(req.body.user_id)) {
+        return res.status(403).json({
+          message: 'Forbidden Request',
+        });
+      } else {
+        await fnBoards.update(req.params.id, params);
+        return res.status(200).json({ message: 'OK' });
+      }
     }
   } catch (e) {
     console.log(e);
@@ -120,17 +163,43 @@ const patch = async (req, res, next) => {
 const del = async (req, res, next) => {
   //게시글 삭제
   try {
+    const accessTokenCheck = isAuthorized(req);
+    const refreshTokenCheck = refreshAuthorized(req);
     const board = await fnBoards.findByPk(req.params.id);
 
-    //토큰 본인확인 추가 필요
-    // if(board.userId!=req.user.id){
-    //   return res.status(401).json({
-    //     message: 'Not Allowed',
-    //   });
-    // }else{
-    await fnBoards.del(req.params.id);
-    return res.status(200).json({ message: 'OK' });
-    // }
+    if (!accessTokenCheck) {
+      // accessToken 만료 / refreshToken 만료 (401)
+      if (!refreshTokenCheck) {
+        res.status(401).json({ message: 'Send new Login Request' });
+      }
+      // accessToken 만료 / refreshToken 유효 (201)
+      else {
+        delete refreshTokenCheck.exp;
+        const accessToken = generateAccessToken(refreshTokenCheck);
+        const userId = refreshTokenCheck.id;
+        if (board.user_id !== Number(userId)) {
+          return res.status(403).json({
+            message: 'Forbidden Request',
+          });
+        } else {
+          await fnBoards.del(req.params.id);
+          return res.status(201).json({ accessToken, message: 'OK' });
+        }
+      }
+    }
+    // accessToken 유효 (200)
+    else {
+      //토큰 본인확인 추가 필요
+      const userId = accessTokenCheck.id;
+      if (board.user_id !== Number(userId)) {
+        return res.status(403).json({
+          message: 'Forbidden Request',
+        });
+      } else {
+        await fnBoards.del(req.params.id);
+        return res.status(200).json({ message: 'OK' });
+      }
+    }
   } catch (e) {
     next(e);
   }
