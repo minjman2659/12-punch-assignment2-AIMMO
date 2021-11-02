@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 //해당 회원의 게시글 조회여부 확인
 const getBoardCountsByUser = async (params) => {
-    const boardCounts = await BoardCounts.count({ user: new mongoose.mongo.ObjectId(params.userId), board: new mongoose.mongo.ObjectId(params.boardId) });
+    const boardCounts = await BoardCounts.count({ user: new mongoose.mongo.ObjectId(params.user_id), board: new mongoose.mongo.ObjectId(params.board_id) });
   return boardCounts;
 };
 

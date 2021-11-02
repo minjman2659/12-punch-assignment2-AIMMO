@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const boardCountsSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "Comments" },
-  board: { type: Schema.Types.ObjectId, ref: "Boards" }
+  user_id: { type: Schema.Types.ObjectId, ref: "Comments" },
+  board_id: { type: Schema.Types.ObjectId, ref: "Boards" }
 });
 
 const BoardCounts = mongoose.model("BoardCounts", boardCountsSchema);

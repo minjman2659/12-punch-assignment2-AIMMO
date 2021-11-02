@@ -4,6 +4,7 @@ const fnBoardCounts = require('../function/boardCounts');
 const getList = async (req, res, next) => {
   //리스트조회
   try {
+    console.log("ctrl_boards: ")
     console.log(req.query);
 
     // const params = {
@@ -23,29 +24,30 @@ const getList = async (req, res, next) => {
 const getOne = async (req, res, next) => {
   //단건조회
   try {
-    if (req.query.userId) {
-      //userId param 있으면 기 조회 여부 확인 후 반영
+    if (req.query.user_id) {
+      //user_id param 있으면 기 조회 여부 확인 후 반영
       const param = {
-        userId: req.query.userId,
-        boardId: req.params.id,
+        user_id: req.query.user_id,
+        board_id: req.params.id,
       };
       const boardCounts = await fnBoardCounts.getBoardCountsByUser(param);
-      console.log('boardCounts', boardCounts);
+      console.log('boardCounts: ', boardCounts);
       if (boardCounts === 0) {
         const boardCount = {
-          user: req.query.userId,
-          board: req.params.id,
+          user_id: req.query.user_id,
+          board_id: req.params.id,
         };
         await fnBoardCounts.store(boardCount);
       }
-    } else {
-      //비회원이 조회한 경우 조회수 증가
+    }/* else {
+      //비회원이 조회한 경우 조회수 증가 x
+      // -> 회원의 로그인 후 조회만 조회수 증가
       const boardCount = {
         user: null,
         board: req.params.id,
       };
       await fnBoardCounts.store(boardCount);
-    }
+    }*/
 
     const board = await fnBoards.findByPk(req.params.id);
 
@@ -54,7 +56,7 @@ const getOne = async (req, res, next) => {
 
     const data = {
       _id: board._id,
-      usre: board.user,
+      user_id: board.user_id,
       title: board.title,
       content: board.content,
       category: board.category,
@@ -78,10 +80,10 @@ const post = async (req, res, next) => {
   //게시글 등록
   try {
     let params = {
+      user_id: req.body.user_id,
       title: req.body.title,
       content: req.body.content,
       category: req.body.category,
-      user_id: req.body.userId,
     };
 
     await fnBoards.store(params);
@@ -97,13 +99,14 @@ const patch = async (req, res, next) => {
   try {
     let params = {
       title: req.body.title,
-      contents: req.body.contents,
+      content: req.body.content,
       category: req.body.category,
+      updateDate: Date.now(),
     };
     const board = await fnBoards.findByPk(req.params.id);
 
     //토큰 본인확인 추가 필요
-    if (board.user != req.body.userId) {
+    if (board.user_id != req.body.user_id) {
       return res.status(401).json({
         message: 'Not Allowed',
       });
