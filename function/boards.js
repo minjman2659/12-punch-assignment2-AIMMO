@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 //리스트 조회 + 검색
 const getList = async (params) => {
-  console.log(params);
+  // console.log(params);
   let where = {};
   if (params.category != undefined) {
     where.category = new RegExp(params.category, 'i');
@@ -12,7 +12,7 @@ const getList = async (params) => {
     where.title = new RegExp(params.title, 'i');
   }
 
-  console.log(where);
+  // console.log(where);
   const boards = await Board.find(where)
     .skip(Number(params.offset))
     .limit(Number(params.limit));
@@ -35,7 +35,7 @@ const store = async (params) => {
 //수정
 const update = async (_id, params) => {
   const board = await Board.findByIdAndUpdate(_id, params);
-  console.log(board);
+  // console.log(board);
   return board;
 };
 
