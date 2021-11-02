@@ -13,6 +13,12 @@
 
 <br/>
 
+## 📍 Team Rules
+
+### [팀 규칙 바로가기](https://mangrove-spectrum-269.notion.site/84675958ee2b4373912678e06160b13d)
+
+<br/>
+
 ## 💻 Tech Stack
 
 Programming Language : JavaScript <br/>
@@ -74,9 +80,10 @@ Github Repository를 clone 한 후, <br/>`npm install` 명령어를 통해 필�
 NodeJS 런타임에서 Express 미들웨어를 활용해서 CRUD 게시판 API를 구현했습니다. 유저 로그인 방식은 JWT를 활용한 토큰 인증 방식으로 구현했으며, Bcrypt 해싱 모듈을 활용해 유저로부터 전달받은 패스워드를 암호화 하여 데이터베이스에 저장했습니다.<br/>
 
 API 중 유저 권한이 필요한 요청들은 <br/>
-1) accessToken이 있는지 먼저 판별 후 있다면 바로 응답을, <br/>
-2) accessToken이 만료되었을 경우, refreshToken을 판별 후 있다면 accessToken 재발급과 함께 응답을, <br/> 
-3) 두 토큰 모두 만료되었을 경우, 다시 로그인해달라는 메세지와 401 응답코드를 응답하도록 구현했습니다. <br/>
+
+1. accessToken이 있는지 먼저 판별 후 있다면 바로 응답을, <br/>
+2. accessToken이 만료되었을 경우, refreshToken을 판별 후 있다면 accessToken 재발급과 함께 응답을, <br/>
+3. 두 토큰 모두 만료되었을 경우, 다시 로그인해달라는 메세지와 401 응답코드를 응답하도록 구현했습니다. <br/>
 
 DB는 mongoose를 이용하여 서버와 연결하였고, AWS의 EC2 서비스를 이용해서 배포를 완료했습니다.
 
