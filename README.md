@@ -69,7 +69,7 @@ Github Repository를 clone 한 후, <br/>`npm install` 명령어를 통해 필�
 
 **로그인 이후 할 수 있는 기능** <br/>
 게시글 작성(POST), 게시글 수정(PATCH), 게시글 삭제(DELETE), <br/>
-댓글 작성(POST), 대댓글 작성(POST)
+댓글 작성(POST), 대댓글 작성(POST), 로그아웃(POST)
 <br/>
 
 **API에 대한 자세한 내용은 [Postman Document](https://documenter.getpostman.com/view/16853602/UVBzmUhk) 을 통해 더 자세하게 확인 할 수 있습니다.** <br/>
